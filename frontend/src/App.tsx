@@ -10,7 +10,7 @@ function App() {
     const startShell = async () => {
         try {
             const resp = await axios.post('/api/start')
-            setSessionID(resp.data.containerID)
+            setSessionID(resp.data.sessionID)
             setMessage(resp.data.message)
         } catch (error) {
             console.error(error)
@@ -19,7 +19,7 @@ function App() {
 
     const stopShell = async () => {
         try {
-            const resp = await axios.post('/api/stop', { 'ContainerID': sessionID })
+            const resp = await axios.post('/api/stop', { 'sessionID': sessionID })
             setMessage(resp.data.message)
             setSessionID('')
 
