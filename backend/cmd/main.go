@@ -14,6 +14,7 @@ func main() {
 	handler := handlers.NewHandler(logger)
 
 	r.POST("/api/start", handler.Start)
+	r.POST("/api/stop", handler.Stop)
 
 	if err := r.Run("localhost:8080"); err != nil {
 		logger.Fatal("Failed to start server", err)

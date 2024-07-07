@@ -31,3 +31,24 @@ func (h *Handler) Start(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Shell started successfully", "containerID": containerID})
 }
+
+func (h *Handler) Stop(c *gin.Context) {
+
+	var body struct {
+		ContainerID string `json:"containerID" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	containerID, err := h.service.StopShellInDocker(body.ContainerID)
+	if err != nil {
+		h.logger.Error("Failed to stop shell", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to stop shell"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Shell stopped successfully", "containerID": containerID})
+}
