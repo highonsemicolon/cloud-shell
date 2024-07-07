@@ -71,3 +71,11 @@ func (h *Handler) Stop(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Shell stopped successfully", "sessionID": body.SessionID})
 }
+
+func (h *Handler) StopAll() {
+	for sessionID, containerID := range h.containerMap {
+		h.service.StopShellInDocker(containerID)
+		delete(h.containerMap, sessionID)
+	}
+	h.logger.Info("All shells stopped")
+}
