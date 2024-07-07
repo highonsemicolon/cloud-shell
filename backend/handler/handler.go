@@ -2,39 +2,32 @@ package handlers
 
 import (
 	"net/http"
-	"os/exec"
 
 	"github.com/gin-gonic/gin"
+	services "github.com/highonsemicolon/cloud-shell/service"
 	"github.com/sirupsen/logrus"
 )
 
 type Handler struct {
-	logger *logrus.Logger
+	logger  *logrus.Logger
+	service services.Service
 }
 
 func NewHandler(logger *logrus.Logger) *Handler {
 	return &Handler{
-		logger: logger,
+		logger:  logger,
+		service: services.NewService(),
 	}
 }
 
 func (h *Handler) Start(c *gin.Context) {
 
-	containerID, err := startShellInDocker()
+	containerID, err := h.service.StartShellInDocker()
 	if err != nil {
+		h.logger.Error("Failed to start shell", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start shell"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Shell started successfully", "containerID": containerID})
-}
-
-func startShellInDocker() (string, error) {
-	cmd := exec.Command("sh", "scripts/start.sh")
-	stdout, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	containerID := string(stdout)
-	return containerID, nil
 }
