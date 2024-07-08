@@ -2,6 +2,8 @@ import { useState } from 'react'
 import axios from 'axios'
 
 import './App.css'
+import TerminalComponent from './components/TerminalApp'
+
 
 function App() {
     const [sessionID, setSessionID] = useState<string>('')
@@ -35,6 +37,9 @@ function App() {
             <button onClick={stopShell} disabled={!sessionID} >Stop Shell</button>
             {sessionID && <p>Session ID: {sessionID}</p>}
             {message && <p>{message}</p>}
+
+            {sessionID && <TerminalComponent />}
+
         </>
     )
 }
